@@ -150,7 +150,14 @@ def radialProfileSum(data):
 
     tbin = numpy.bincount(r.ravel(), data.ravel())
     nr = numpy.bincount(r.ravel()).astype(float)
-    radial_sum = numpy.where(nr==0.0, numpy.nan, tbin / nr)
+    radial_sum = numpy.full_like(tbin, numpy.nan, dtype=float)
+
+    numpy.divide(
+        tbin,
+        nr,
+        out=radial_sum,
+        where=nr != 0
+    )
     
     radial_values = numpy.linspace(0,r.max(), r.max()+1)
     return radial_sum, radial_values

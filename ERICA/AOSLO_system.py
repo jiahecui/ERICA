@@ -142,7 +142,6 @@ class AOSLO:
         '''
 
         # Define the horizontal samples (sinusoidal)
-        x, forward_scan = self.fastScan(numpy.linspace(0, image.shape[1]-1, image.shape[1]) * self.time_resolution)
         x, forward_scan = self.fastScan(numpy.linspace(self.fast.min(), self.fast.max(), image.shape[1]) * self.time_resolution)
         
         
