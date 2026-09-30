@@ -257,5 +257,3 @@ def diffractionOnly(image, pixel_size_arcmin, wavelength, pupil_diameter, pinhol
     image_diffraction = ERICA_toolkit.convolve2D(image, psf_use)
 
     return image_diffraction
-
-

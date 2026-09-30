@@ -1,4 +1,4 @@
-''' 
+'''
 ERICA toolkit
 -------------------
 Useful functions called within other modules or within exampe Juypter notebooks.
@@ -19,7 +19,7 @@ class minim:
         self.x=x
         self.param,self.fn,self.warnflag=self.fitSimplex(self.x,self.obs,p0,arg=args,maxfev=maxfev,xtol=xtol, ftol=ftol)
         self.sumSquares=numpy.sum(self.residuals(self.param,self.obs,self.x)**2)
-        
+
 
     def residuals(self,p, obs, x,arg=None):
         if type(arg) != type(None):
@@ -47,11 +47,11 @@ class minim:
         fn=self.peval(x,p)
         return p,fn,warnflag
 
-    
+
 
 def fitCurcio(x, data, p0=[0.0,0.0,0.0,0.0]):
     '''Performs fitting to the Curcio dataset
-    
+
         Parameters
         ----------
         x : array_like
@@ -60,50 +60,50 @@ def fitCurcio(x, data, p0=[0.0,0.0,0.0,0.0]):
             The Curcio data
         p0 : array_like
             The initial guess for the fit parameters
-        
-            
+
+
         Returns
         -------
         f.param : array_like
             The fit parameters
-        
+
     '''
-    
+
     p0[2] = 0.5
     p0[3] = data.min()
     f=minim(functCurcio,x,data,p0)
     return f.param
 
 def functCurcio(x, p):
-    
+
     '''Performs fitting to the Curcio dataset
-    
+
         Parameters
         ----------
         x : array_like
             A 1D array containing the eccenricity samples (degrees)
-        
+
         p : array_like
             The guess for the fit parameters
-        
-            
+
+
         Returns
         -------
         result.real : array_like
             The fit parameters
-            
-    '''  
-      
+
+    '''
+
     # The output could be complex so change the data type to match
     x2 = numpy.array(x, dtype=numpy.complex)
 
     result = p[0] * (x2 + p[1]) ** p[2] + p[3]
-    
+
     return result.real
 
 def functGaussian(x, mean, stdev):
     '''Calculates a Gaussian function
-    
+
         Parameters
         ----------
         x : array_like
@@ -112,37 +112,37 @@ def functGaussian(x, mean, stdev):
             The mean (cenre)r of the Gaussian
         stdev : float
             The standard deviation (width) of the Gaussian.
-        
-            
+
+
         Returns
         -------
         gaussian_profile : array_like
             The computed filter profile.
-        
+
     '''
     gaussian_profile = numpy.exp(-(x - mean) ** 2 / (2 * stdev ** 2))
-    
+
     return gaussian_profile
 
 
 def radialProfileSum(data):
     '''Computes the radial profile of a 2D data set, where values are summed
     over all angles
-    
+
         Parameters
         ----------
         data : array_like
             The 2D to data
-        
-            
+
+
         Returns
         -------
         radial_sum : array_like
             The computed radial profile.
         radial_values : array_like
             The radius values
-            
-        
+
+
     '''
     y, x = numpy.ogrid[-data.shape[0]/2:data.shape[0]/2:data.shape[0]*1j,-data.shape[1]/2:data.shape[1]/2:data.shape[1]*1j]
     r = numpy.sqrt(x**2 + y**2).round().astype(int)
@@ -158,7 +158,7 @@ def radialProfileSum(data):
         out=radial_sum,
         where=nr != 0
     )
-    
+
     radial_values = numpy.linspace(0,r.max(), r.max()+1)
     return radial_sum, radial_values
 
@@ -169,112 +169,112 @@ def radialProfileSum(data):
 
 def convolve2D(array_1, array_2):
     '''There are different ways to perform convolution. This is a wrapper
-    function allowing the method of convolution to be changed globally 
-    throughout ERICA. The original implementation uses scipy.signal.convolve, 
+    function allowing the method of convolution to be changed globally
+    throughout ERICA. The original implementation uses scipy.signal.convolve,
     which is fast and implements zero padding. It will automatically use either
     direct or FFT-based circular convolution depending on which is predicted to
     be faster based on the array sizes.
-    
+
     Parameters
         ----------
     array_1 : array_like
         A 2D array containing one of the two arrays to be convolved
     array_1 : array_like
         A 2D array containing the other of the two arrays to be convolved
-    
-        
+
+
     Returns
     -------
     convolution : array_like
         The computed convolution.
     '''
-    
+
     convolution = scipy.signal.convolve(array_1, array_2, mode='same')
     return convolution
 
 def bandPass(frequencies, centre, width):
     '''Calculates a Gaussian bandpass filter profile
-    
+
         Parameters
         ----------
         frequencies : array_like
             A 1D array containing the frequency samples
         centre : float
-            The centre frequency of the filter. 
+            The centre frequency of the filter.
         width : float
             The full-width-half-maximum of the filter.
-        
-            
+
+
         Returns
         -------
         filter_profile : array_like
             The computed filter profile.
-        
+
     '''
 
     # Calculate the standard deviation from the FWHM
     gaussian_std = width / (2.0 * numpy.sqrt(2.0 * numpy.log(2.0)))
-    
-    # The filter profile is repeated for positive and negative frequencies (+centre and -centre)    
+
+    # The filter profile is repeated for positive and negative frequencies (+centre and -centre)
     filter_profile = functGaussian(frequencies, centre, gaussian_std) + functGaussian(frequencies, -centre, gaussian_std)
-    
+
     return filter_profile
 
 def lowPass(frequencies, cutoff, order=5):
     '''Calculates a Butterworth low pass filter profile
-    
+
         Parameters
         ----------
         frequencies : array_like
             A 1D array containing the frequency samples
         cutoff : float
-            The -3dB cut-off frequency of the filter. 
+            The -3dB cut-off frequency of the filter.
         order : float, optional
             The order of the Butterworth filter (number of poles; default=5)
-        
-            
+
+
         Returns
         -------
         filter_profile : array_like
             The computed filter profile.
-        
+
     '''
 
 
     filter_profile = numpy.sqrt( 1 / (1 + (frequencies / cutoff) ** (2 * order)))
-    
+
     return filter_profile
- 
+
 def highPass(frequencies, cutoff, order=5):
-    
+
     '''Calculates a Butterworth lhighpass filter profile
-    
+
         Parameters
         ----------
         frequencies : array_like
             A 1D array containing the frequency samples
         cutoff : float
-            The -3dB cut-off frequency of the filter. 
+            The -3dB cut-off frequency of the filter.
         order : float, optional
             The order of the Butterworth filter (number of poles; default=5)
-        
-            
+
+
         Returns
         -------
         filter_profile : array_like
             The computed filter profile.
-        
+
     '''
-    
+
 
     filter_profile = numpy.sqrt(1 / (1 + (cutoff / frequencies) ** (2 * order)))
-    
+
     return filter_profile
 
 
 def filter_1d(data, centre, sample_scale, width=None, typ='bp', order=5):
-    '''Preforms filtering of 1D data 
-    
+    '''Preforms filtering of 1D data
+
         Parameters
         ----------
         data : array_like
@@ -286,7 +286,7 @@ def filter_1d(data, centre, sample_scale, width=None, typ='bp', order=5):
         sample_scale : float
             The size of a data sample (e.g. 1 second).
         width : float, optional
-            The full-width-half-maximum of the filter, if using a bandpass 
+            The full-width-half-maximum of the filter, if using a bandpass
             filter.
         typ : string
             The type of filter which should be either 'bp' for bandpass filter,
@@ -294,8 +294,8 @@ def filter_1d(data, centre, sample_scale, width=None, typ='bp', order=5):
             pass filters use the Butterworth filter.
         order : int, optional
             The order of the Butterworth filter (default is 5).
-        
-            
+
+
         Returns
         -------
         filtered_data : array_like
@@ -304,53 +304,53 @@ def filter_1d(data, centre, sample_scale, width=None, typ='bp', order=5):
             The computed filter profile.
         frequencies : array_like
             The frequency samples for the computed filter.
-        
+
     '''
-    
+
     if data.ndim != 1:
         raise TypeError('Data must by a 1D array')
-    
+
     frequency_scale = 1.0 / (sample_scale * data.shape[0])
-    
+
     frequencies = numpy.linspace(-numpy.floor(data.shape[0]/2.), numpy.floor(data.shape[0]/2. - 1.0), data.shape[0]) * frequency_scale
-    
+
     if typ == 'bp':
         if width is None:
             raise TypeError('Optional argument "width" must be specified for a bandpass filter')
         filter_profile = bandPass(frequencies,centre, width)
-    
+
     elif typ == 'hp':
         filter_profile = highPass(frequencies, centre, order=order)
-    
+
     elif typ == 'lp':
         filter_profile = lowPass(frequencies, centre, order=order)
 
-    
+
     # Use a Hamming window
     haming_window = numpy.hamming(data.shape[0])
-    
+
     data_windowed = data * haming_window
-            
+
     # Convolve images via Fourier transform and multiplication
     fft_data_windowed = numpy.fft.fftshift(numpy.fft.fft(data_windowed))
     fft_filtered = fft_data_windowed * filter_profile
-    
+
     # Inverse Fourier transform
     data_windowed_filtered = numpy.fft.ifft(numpy.fft.ifftshift(fft_filtered)).real
-    
+
     # Remove the effects of the Hamming window
-    filtered_data = data_windowed_filtered / haming_window 
-    
+    filtered_data = data_windowed_filtered / haming_window
+
     return filtered_data, filter_profile,frequencies
 
 
 
-    
-    
+
+
 
 def normalise(data, bits=8, mn=None, mx=None):
-    '''Normalises data 
-    
+    '''Normalises data
+
         Parameters
         ----------
         data : array_like
@@ -363,17 +363,17 @@ def normalise(data, bits=8, mn=None, mx=None):
         mx : float, optional
             The maximum value to normalise to. The default is the maximum
             value in the data.
-            
-       
-        
-            
+
+
+
+
         Returns
         -------
         data_norm_scaled : array_like
             The normalised data, scaled to the required bit depth
-        
+
     '''
-    
+
     data=data.astype(numpy.float64)
     if type(mn) == type(None):
         mn = data.min()
@@ -430,5 +430,3 @@ def make_segments(x, y):
     points = numpy.array([x, y]).T.reshape(-1, 1, 2)
     segments = numpy.concatenate([points[:-1], points[1:]], axis=1)
     return segments
-
-
