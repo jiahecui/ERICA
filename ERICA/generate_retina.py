@@ -21,7 +21,8 @@ from ERICA import ERICA_toolkit, peak_detection
 # Curcio et al (1990) J. Comp. Neuro., Vol. 292, 497-523 - Figure 6, raw data taken from:
 # Andrew B. Watson; A formula for human retinal ganglion cell receptive field density as a function of visual field location. Journal of Vision 2014;14(7):15. doi: 10.1167/14.7.15.
 # From Watson (2014): "We order the meridians temporal, superior, nasal, inferior, consistent with increasing polar angle in the visual field of the right eye, and assign them indexes of 1 to 4"
-CONE_DENSITY_RAW = numpy.loadtxt(os.path.abspath(os.path.normpath(os.path.join('Data', 'Curcio_1990_Watson.csv'))), delimiter=',')
+_curcio_csv = os.path.abspath(os.path.normpath(os.path.join(os.path.dirname(__file__) + '/Data', 'Curcio_1990_Watson.csv')))
+CONE_DENSITY_RAW = numpy.loadtxt(_curcio_csv, delimiter=',')
 
 # Refractive indices taken from Meadway A and Sincich LC (2019), "Light reflectivity and interference in cone photoreceptors", Biomed. Opt. Express. 10(12):6531-6554
 # Original data in A. W. Snyder and C. Pask (1973), "The  Stiles-Crawford effect-explanation and consequences", Vis. Res. Vol. 13, 1115-1137.
