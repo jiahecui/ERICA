@@ -11,7 +11,7 @@ import sys
 
 from scipy.special import erf
 
-from ERICA import ERICA_toolkit, peak_detection
+from . import ERICA_toolkit, peak_detection
 
 ####################
 # GLOBAL VARIABLES #

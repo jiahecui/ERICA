@@ -17,7 +17,7 @@ from scipy.ndimage.measurements import center_of_mass
 from skimage.segmentation import watershed
 
 
-from ERICA import ERICA_toolkit
+from . import ERICA_toolkit
 
 
 def findNeighbours(peaks, number_neighbours=6):

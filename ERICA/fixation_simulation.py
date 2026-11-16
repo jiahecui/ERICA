@@ -11,7 +11,7 @@ import yaml
 
 from scipy.optimize import fmin
 
-from ERICA import ERICA_toolkit
+from . import ERICA_toolkit
 
 class Fixation:
 

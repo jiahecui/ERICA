@@ -12,7 +12,7 @@ import sys
 from PIL import Image
 
 
-from ERICA import aberration_rendering, ERICA_toolkit
+from . import aberration_rendering, ERICA_toolkit
 
 
 def createPinhole(psf_size, pinhole_add, oversampling, ph_scale_up = 10.):
